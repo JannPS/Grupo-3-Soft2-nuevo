@@ -32,5 +32,12 @@ router.post(
 // Consultar denuncias por usuario
 router.get("/mis-denuncias", authMiddleware, DenunciaController.obtenerPorUsuario as any);
 
+// Cambiar estado de una denuncia
+router.put(
+  "/estado/:id",
+  authMiddleware, // opcional: puedes quitarlo si solo el admin actualiza
+  DenunciaController.cambiarEstado as any
+);
+
 export default router;
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { denunciaService } from "../services/DenunciaService";
+import { CorreoService } from "../services/CorreoService";
 
 export class DenunciaController {
   // Denuncia SIN archivo
@@ -16,6 +17,14 @@ export class DenunciaController {
         correo,
         descripcion,
         anonima === "true"
+      );
+
+      // Enviar correo
+      const correoService = new CorreoService();
+      await correoService.enviar(
+        correo,
+        "Denuncia registrada con éxito",
+        `<p>Hola, tu denuncia fue registrada correctamente en WARMIKUNA.</p>`
       );
 
       return res.status(201).json({ mensaje: "Denuncia creada exitosamente", denuncia });
@@ -48,6 +57,14 @@ export class DenunciaController {
         archivo?.filename ?? null
       );
 
+      // Enviar correo
+      const correoService = new CorreoService();
+      await correoService.enviar(
+        correo,
+        "Denuncia con archivo registrada",
+        `<p>Hola, tu denuncia con archivo fue registrada correctamente en WARMIKUNA.</p>`
+      );
+
       return res.status(201).json({ mensaje: "Denuncia registrada con archivo", denuncia });
     } catch (error: any) {
       console.error("❌ Error en crearConArchivo:", error);
@@ -69,6 +86,24 @@ export class DenunciaController {
     } catch (error: any) {
       console.error("❌ Error al obtener denuncias:", error);
       return res.status(500).json({ error: "Error al obtener denuncias" });
+    }
+  }
+
+  // Cambiar estado de denuncia
+    static async cambiarEstado(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { nuevoEstado } = req.body;
+
+      const denunciaActualizada = await denunciaService.cambiarEstado(Number(id), nuevoEstado);
+
+      return res.status(200).json({
+        mensaje: "Estado actualizado correctamente",
+        denuncia: denunciaActualizada
+      });
+    } catch (error) {
+      console.error("❌ Error al cambiar estado:", error);
+      return res.status(500).json({ error: "No se pudo actualizar el estado de la denuncia" });
     }
   }
 }

@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   form: FormGroup;
   mensaje: string = '';
+  error: string = '';  // ✅ Se añade esta línea
 
   constructor(
     private fb: FormBuilder,
@@ -29,13 +30,12 @@ export class LoginComponent {
     if (this.form.invalid) return;
 
     this.authService.login(this.form.value).subscribe({
-      next: (res: any) => {
+      next: (res) => {
         localStorage.setItem('token', res.token);
-        this.mensaje = 'Inicio de sesión exitoso';
-        this.router.navigate(['/denunciar']); 
+        this.router.navigate(['/home']); // Cambia '/home' según tu ruta principal
       },
       error: (err) => {
-        this.mensaje = err.error?.error || 'Credenciales inválidas';
+        this.error = 'Credenciales inválidas'; // Mensaje mostrado si falla el login
       }
     });
   }
@@ -45,7 +45,6 @@ export class LoginComponent {
   }
 
   irARecuperar() {
-  this.router.navigate(['/recuperar']);
+    this.router.navigate(['/recuperar']);
   }
-
 }

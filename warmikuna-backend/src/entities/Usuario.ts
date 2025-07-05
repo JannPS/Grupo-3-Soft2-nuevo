@@ -2,12 +2,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  Unique
+  CreateDateColumn
 } from "typeorm";
 
 @Entity("usuarios")
-@Unique(["dni"])
 export class Usuario {
   @PrimaryGeneratedColumn()
   id!: number;
